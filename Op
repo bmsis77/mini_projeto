@@ -1,0 +1,147 @@
+// =========================
+// ENUM Genero
+// =========================
+enum Genero {
+    ROCK,
+    POP,
+    MPB,
+    FUNK,
+    ELETRONICA,
+    SERTANEJO
+}
+
+// =========================
+// CLASSE ABSTRACT MIDIA
+// =========================
+abstract class Midia {
+
+    protected String nome;
+    protected Double duracaoMinutos;
+
+    public Midia() {}
+
+    public Midia(String nome, Double duracaoMinutos) {
+        this.nome = nome;
+        this.duracaoMinutos = duracaoMinutos;
+    }
+
+    public abstract Boolean buscar(String query);
+
+    public String getNome() {
+        return nome;
+    }
+
+    public Double getDuracaoMinutos() {
+        return duracaoMinutos;
+    }
+}
+
+// =========================
+// CLASSE MUSICA
+// =========================
+class Musica extends Midia {
+
+    private String artista;
+    private String album;
+    private Genero genero;
+
+    public Musica() {}
+
+    public Musica(String nome, Double duracaoMinutos, String artista, String album, Genero genero) {
+        super(nome, duracaoMinutos);
+        this.artista = artista;
+        this.album = album;
+        this.genero = genero;
+    }
+
+    @Override
+    public Boolean buscar(String query) {
+        String q = query.toLowerCase();
+        return nome.toLowerCase().contains(q)
+                || artista.toLowerCase().contains(q)
+                || album.toLowerCase().contains(q)
+                || genero.toString().toLowerCase().contains(q);
+    }
+
+    public Genero getGenero() {
+        return genero;
+    }
+}
+
+// =========================
+// CLASSE EPISODIO
+// =========================
+class Episodio extends Midia {
+
+    private String podcast;
+
+    public Episodio() {}
+
+    public Episodio(String nome, Double duracaoMinutos, String podcast) {
+        super(nome, duracaoMinutos);
+        this.podcast = podcast;
+    }
+
+    @Override
+    public Boolean buscar(String query) {
+        String q = query.toLowerCase();
+        return nome.toLowerCase().contains(q)
+                || podcast.toLowerCase().contains(q);
+    }
+}
+
+// =========================
+// CLASSE STREAMING
+// =========================
+import java.util.ArrayList;
+import java.util.List;
+
+class Streaming {
+
+    private String nome;
+    private List<Midia> midias;
+
+    public Streaming() {}
+
+    public Streaming(String nome) {
+        this.nome = nome;
+        this.midias = new ArrayList<>();
+    }
+
+    public void adicionarMidia(Midia midia) {
+        midias.add(midia);
+    }
+
+    public List<Midia> buscarMidia(String query) {
+        List<Midia> resultado = new ArrayList<>();
+        for (Midia m : midias) {
+            if (m.buscar(query)) {
+                resultado.add(m);
+            }
+        }
+        return resultado;
+    }
+
+    public List<Musica> buscarMusicasPorGenero(Genero genero) {
+        List<Musica> resultado = new ArrayList<>();
+        for (Midia m : midias) {
+            if (m instanceof Musica) {
+                Musica musica = (Musica) m;
+                if (musica.getGenero() == genero) {
+                    resultado.add(musica);
+                }
+            }
+        }
+        return resultado;
+    }
+
+    public Integer getQuantidadeEpisodios() {
+        int cont = 0;
+        for (Midia m : midias) {
+            if (m instanceof Episodio) {
+                cont++;
+            }
+        }
+        return cont;
+    }
+}
